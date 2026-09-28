@@ -127,6 +127,7 @@ def sanitize_pdf_page(page):
 @router.get("", response_model=None)
 @router.get("/")
 def get_books(
+    response: Response,
     search: Optional[str] = None,
     genre: Optional[str] = None,
     limit: int = 500,
@@ -135,7 +136,7 @@ def get_books(
     conn = get_db()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-    query = "SELECT * FROM oceanofpdf_books WHERE pdf_path IS NOT NULL AND pdf_path != ''"
+    query = "SELECT id, book_name, author, released_date, genre, book_cover FROM oceanofpdf_books WHERE pdf_path IS NOT NULL AND pdf_path != ''"
     params = []
 
     # Default Browse Mode: Only show volumes with cover art when user is NOT searching
@@ -177,11 +178,12 @@ def get_books(
         books.append(book_dict)
 
     conn.close()
+    response.headers["Cache-Control"] = "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
     return books
 
 
 @router.get("/categories")
-def get_categories():
+def get_categories(response: Response):
     conn = get_db()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -213,6 +215,7 @@ def get_categories():
     category_counts["ALL"] = total
 
     conn.close()
+    response.headers["Cache-Control"] = "public, max-age=300, s-maxage=1800, stale-while-revalidate=3600"
     return category_counts
 
 
@@ -254,7 +257,7 @@ def get_pdf_page(book_id: int, page_num: int):
     # Redact oceanofpdf text / watermarks before rendering
     sanitize_pdf_page(page)
 
-    pix = page.get_pixmap(dpi=150)
+    pix = page.get_pixmap(dpi=120)
     img_bytes = pix.tobytes("jpeg")
 
     return Response(

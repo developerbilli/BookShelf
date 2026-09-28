@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from database import init_db
 from routers import books, recommendations
 
@@ -20,6 +21,9 @@ app = FastAPI(
     redoc_url="/redoc" if enable_docs else None,
     openapi_url="/openapi.json" if enable_docs else None
 )
+
+# High-Performance Gzip Compression for JSON responses > 500 bytes
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # CORS Security Settings
 allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "*")
