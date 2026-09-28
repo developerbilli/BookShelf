@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-editorial: #F4F0E8;
+  --bg-card: #FAF8F5;
+  --text-primary: #1C1917;
+  --text-muted: #78716C;
+  --accent-terracotta: #C86D51;
+  --accent-olive: #3D4A3E;
+  --accent-gold: #D4AF37;
+}
+
+body {
+  background-color: var(--bg-editorial);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.font-serif-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-serif-heading {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+/* Spine Vertical Text */
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+/* Book spine shadow & texture overlays */
+.spine-texture-cloth {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+  background-size: 4px 4px;
+}
+
+.spine-texture-leather {
+  background-image: linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.25) 100%);
+}
+
+.spine-texture-canvas {
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 0, transparent 50%);
+  background-size: 6px 6px;
+}
+
+.spine-highlight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2px;
+  width: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.spine-inner-shadow {
+  box-shadow: inset 2px 0 4px rgba(255,255,255,0.25), inset -3px 0 6px rgba(0,0,0,0.4);
+}
+
+/* Custom Horizontal Shelf Scrollbar */
+.shelf-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 6px;
+}
+.shelf-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+.shelf-scrollbar::-webkit-scrollbar-thumb {
+  background: #C86D51;
+  border-radius: 4px;
+}
+.shelf-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #A85339;
+}
+
+/* Wood Shelf Surface */
+.shelf-wood-surface {
+  background: linear-gradient(180deg, #3A2312 0%, #26160A 100%);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.1);
+}
+
+.shelf-wood-edge {
+  background: linear-gradient(180deg, #4A2E18 0%, #1A0D05 100%);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* Typewriter Cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: #C86D51;
+  margin-left: 4px;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------- */
+/* REAL OPEN HARDCOVER BOOK 3D STYLING                          */
+/* ------------------------------------------------------------- */
+
+.real-book-container {
+  perspective: 1500px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hardcover Under-Base */
+.real-book-cover-base {
+  position: absolute;
+  inset: -12px -18px -14px -18px;
+  background: #4A1A12; /* Rich dark mahogany leather cover */
+  border-radius: 12px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+    0 10px 20px -5px rgba(0, 0, 0, 0.3),
+    inset 0 0 10px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Stacked Pages Edges (Left & Right Book Block) */
+.real-book-block {
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-radius: 6px;
+  background: #FAF6EE;
+  box-shadow:
+    /* Left side paper stack thickness */
+    -3px 0 0 #EBE4D8,
+    -6px 0 0 #E2DBCE,
+    -9px 0 0 #D7CFBF,
+    -12px 0 0 #CCC3B2,
+    /* Right side paper stack thickness */
+    3px 0 0 #EBE4D8,
+    6px 0 0 #E2DBCE,
+    9px 0 0 #D7CFBF,
+    12px 0 0 #CCC3B2,
+    /* Bottom paper stack depth */
+    0 4px 6px rgba(0,0,0,0.2),
+    0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Left Page 3D Curve */
+.real-book-left-page {
+  background: linear-gradient(90deg, #F5EFE4 0%, #FAF6EE 82%, #ECE3D3 100%);
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: 
+    inset 0 10px 15px -8px rgba(0,0,0,0.06),
+    inset 0 -10px 15px -8px rgba(0,0,0,0.06),
+    inset 10px 0 15px -8px rgba(0,0,0,0.04);
+  position: relative;
+}
+
+/* Right Page 3D Curve */
+.real-book-right-page {
+  background: linear-gradient(90deg, #ECE3D3 0%, #FAF6EE 18%, #F5EFE4 100%);
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 
+    inset 0 10px 15px -8px rgba(0,0,0,0.06),
+    inset 0 -10px 15px -8px rgba(0,0,0,0.06),
+    inset -10px 0 15px -8px rgba(0,0,0,0.04);
+  position: relative;
+}
+
+/* Center Binding Spine Gutter Shadow */
+.real-book-spine-gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  background: linear-gradient(
+    90deg, 
+    rgba(0, 0, 0, 0.25) 0%, 
+    rgba(0, 0, 0, 0.08) 40%, 
+    rgba(0, 0, 0, 0.04) 50%, 
+    rgba(0, 0, 0, 0.08) 60%, 
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Center Thread Binding Line */
+.real-book-spine-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 3px rgba(0,0,0,0.4);
+  z-index: 31;
+  pointer-events: none;
+}
+
+/* Page Corner Curl on Hover */
+.page-curl-corner-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.08) 50%);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.page-curl-corner-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(225deg, transparent 50%, rgba(0,0,0,0.08) 50%);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
