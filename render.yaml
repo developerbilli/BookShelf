@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: bookshelf-backend
+    env: python
+    region: singapore
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: DB_NAME
+        fromDatabase:
+          name: bookshelf-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: bookshelf-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: bookshelf-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: bookshelf-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: bookshelf-db
+          property: port
+
+databases:
+  - name: bookshelf-db
+    databaseName: library
+    user: library_user
+    region: singapore
+    plan: free
