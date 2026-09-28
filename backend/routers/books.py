@@ -67,14 +67,15 @@ def get_pdf_file_path(book_id: int) -> str:
 
         tmp_path = os.path.join(CACHE_DIR, f"{file_id}.pdf.tmp")
         try:
-            import sys
-            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-            if root_dir not in sys.path:
-                sys.path.append(root_dir)
-            app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            if app_dir not in sys.path:
-                sys.path.append(app_dir)
-            from upload_to_gdrive import get_drive_service
+            try:
+                from gdrive_service import get_drive_service
+            except ImportError:
+                import sys
+                backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+                if backend_dir not in sys.path:
+                    sys.path.append(backend_dir)
+                from gdrive_service import get_drive_service
+
             service = get_drive_service()
             if not service:
                 raise Exception("Drive service unavailable")
