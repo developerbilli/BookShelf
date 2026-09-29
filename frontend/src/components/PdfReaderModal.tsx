@@ -346,6 +346,25 @@ export const PdfReaderModal: React.FC<PdfReaderModalProps> = ({
     };
   }, [book?.id, currentPage, isSingle, loading, pdfInfo?.page_count]);
 
+  // Ultra-Fast Zero-Delay Page Prefetcher (pre-buffers next & previous pages in browser memory)
+  useEffect(() => {
+    if (!book || !pdfInfo || loading) return;
+    const bId = book.id;
+    const totalP = typeof pdfInfo?.page_count === 'number' ? pdfInfo.page_count : 1;
+
+    const pagesToPrefetch = [
+      currentPage + 1,
+      currentPage + 2,
+      currentPage + 3,
+      currentPage - 1,
+    ].filter((p) => p >= 1 && p <= totalP);
+
+    pagesToPrefetch.forEach((pNum) => {
+      const img = new Image();
+      img.src = getPdfPageUrl(bId, pNum);
+    });
+  }, [book?.id, currentPage, pdfInfo, loading]);
+
   // Native Browser Text Selection Listener
   useEffect(() => {
     const handleSelectionChange = () => {

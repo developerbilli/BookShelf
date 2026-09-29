@@ -24,7 +24,11 @@ LOCKS_LOCK = threading.Lock()
 # In-memory document handle cache for instant <1ms page rendering
 DOC_CACHE = {}
 DOC_CACHE_LOCK = threading.Lock()
-MAX_DOC_CACHE = 30
+MAX_DOC_CACHE = 150
+
+# Global In-Memory Cache for Categories (eliminates scanning 32,684 DB rows on every request)
+CATEGORIES_CACHE = None
+CATEGORIES_CACHE_LOCK = threading.Lock()
 
 def get_file_lock(file_id: str) -> threading.Lock:
     with LOCKS_LOCK:
@@ -130,7 +134,7 @@ def get_books(
     response: Response,
     search: Optional[str] = None,
     genre: Optional[str] = None,
-    limit: int = 500,
+    limit: int = 120,
     offset: int = 0
 ):
     conn = get_db()
@@ -178,12 +182,20 @@ def get_books(
         books.append(book_dict)
 
     conn.close()
-    response.headers["Cache-Control"] = "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+    response.headers["Cache-Control"] = "public, max-age=120, s-maxage=600, stale-while-revalidate=1200"
     return books
 
 
 @router.get("/categories")
 def get_categories(response: Response):
+    global CATEGORIES_CACHE
+
+    # Return instantly from in-memory cache if available
+    with CATEGORIES_CACHE_LOCK:
+        if CATEGORIES_CACHE is not None:
+            response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600, stale-while-revalidate=7200"
+            return CATEGORIES_CACHE
+
     conn = get_db()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -215,8 +227,12 @@ def get_categories(response: Response):
     category_counts["ALL"] = total
 
     conn.close()
-    response.headers["Cache-Control"] = "public, max-age=300, s-maxage=1800, stale-while-revalidate=3600"
-    return category_counts
+
+    with CATEGORIES_CACHE_LOCK:
+        CATEGORIES_CACHE = category_counts
+
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600, stale-while-revalidate=7200"
+    return CATEGORIES_CACHE
 
 
 @router.get("/{book_id}/pdf-info")
